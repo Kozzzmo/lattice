@@ -16,7 +16,13 @@ jobs:
         run: cmake -S . -B build -A x64 -DLATTICE_BUILD_TOOLS=OFF
 
       - name: Build
-        run: cmake --build build --config Release --target Lattice_VST3 Lattice_Standalone LatticeTests --parallel
+        shell: pwsh
+        run: |
+          cmake --build build --config Release --target Lattice_VST3 Lattice_Standalone LatticeTests --parallel 2>&1 | Tee-Object -FilePath build.log
+          if ($LASTEXITCODE -ne 0) {
+            Select-String -Path build.log -Pattern ': (fatal )?error' | Select-Object -First 25 | ForEach-Object { Write-Output "::error::$($_.Line.Trim())" }
+            exit 1
+          }
 
       - name: Unit tests
         run: build\LatticeTests_artefacts\Release\LatticeTests.exe

@@ -15,6 +15,10 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 
+if (MSVC)
+    add_compile_options(/utf-8 /bigobj)
+endif()
+
 juce_add_binary_data(LatticeAssets
     HEADER_NAME LatticeAssets.h
     NAMESPACE LatticeAssets
