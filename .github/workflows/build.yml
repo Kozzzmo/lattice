@@ -43,8 +43,12 @@ jobs:
           name: Lattice-windows
           path: Lattice-windows.zip
 
-      - name: Release (tags only)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Publish release
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: build-${{ github.run_number }}
+          name: Lattice build ${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           files: Lattice-windows.zip
